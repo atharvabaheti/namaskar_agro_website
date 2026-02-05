@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { Product } from "@/data/products";
+import { getAssetPath } from "@/lib/utils";
 
 interface ProductBottleScrollProps {
     product: Product;
@@ -34,10 +35,9 @@ const ProductBottleScroll: React.FC<ProductBottleScrollProps> = ({
         const loadPromises = Array.from({ length: frameCount }).map((_, i) => {
             return new Promise<void>((resolve, reject) => {
                 const img = new Image();
-                // Construct path: /images/mango lassi/ezgif-frame-001.jpg
                 const frameIndex = i + 1; // 1-based index
                 const frameStr = String(frameIndex).padStart(3, '0');
-                img.src = `/images/${product.folderPath}/ezgif-frame-${frameStr}.jpg`;
+                img.src = getAssetPath(`images/${product.folderPath}/ezgif-frame-${frameStr}.jpg`);
 
                 img.onload = () => {
                     loadedImages[i] = img;
