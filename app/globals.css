@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 253, 251, 247; /* Cream */
+  --background-end-rgb: 255, 253, 208; /* Milk */
+  --product-gradient: linear-gradient(to bottom, var(--background-start-rgb), var(--background-end-rgb));
+}
+
+@layer base {
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: var(--product-gradient);
+    @apply antialiased font-sans;
+  }
+
+  /* Custom Selection */
+  ::selection {
+    @apply bg-saffron text-white;
+  }
+
+  /* Scrollbar hiding for app-like feel */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
