@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import Link from 'next/link';
 import { ShoppingBag, Menu } from 'lucide-react';
+import { getAssetPath } from '@/lib/utils';
 
 const Navbar = () => {
     const { scrollY } = useScroll();
@@ -25,7 +26,7 @@ const Navbar = () => {
                 {/* Logo Area */}
                 <Link href="/" className="group">
                     <img
-                        src="/NAIlogo.png"
+                        src={getAssetPath("NAIlogo.png")}
                         alt="Namaskar Agro Logo"
                         className="h-20 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
                     />
