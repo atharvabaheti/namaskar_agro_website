@@ -58,15 +58,42 @@ const ProductBottleScroll: React.FC<ProductBottleScrollProps> = ({
         Promise.all(loadPromises);
     }, [product.folderPath, product.name, product.frameCount]);
 
-    // Render to canvas based on scroll progress
-    useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        onScrollProgress(latest); // Notify parent for text sync
-
-        if (!canvasRef.current || images.length === 0 || isLoading) return;
+    // Render specific frame to canvas
+    const renderFrame = (frameIndex: number) => {
+        if (!canvasRef.current || images.length === 0) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
+
+        const img = images[frameIndex];
+        if (!img) return;
+
+        // Calculate aspect ratio to contain image within canvas
+        const scale = Math.min(
+            canvas.width / img.width,
+            canvas.height / img.height
+        ) * 1.0;
+
+        const x = (canvas.width / 2) - (img.width / 2) * scale;
+        const y = (canvas.height / 2) - (img.height / 2) * scale;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+    };
+
+    // Initial render of first frame when images are loaded
+    useEffect(() => {
+        if (images.length > 0 && canvasRef.current) {
+            renderFrame(0); // Show first frame immediately
+        }
+    }, [images]);
+
+    // Render to canvas based on scroll progress
+    useMotionValueEvent(scrollYProgress, "change", (latest) => {
+        onScrollProgress(latest); // Notify parent for text sync
+
+        if (images.length === 0 || isLoading) return;
 
         const frameCount = product.frameCount;
         const frameIndex = Math.min(
@@ -74,21 +101,7 @@ const ProductBottleScroll: React.FC<ProductBottleScrollProps> = ({
             Math.floor(latest * frameCount)
         );
 
-        const img = images[frameIndex];
-        if (!img) return;
-
-        // Clear and draw
-        // Calculate aspect ratio to contain image within canvas
-        const scale = Math.min(
-            canvas.width / img.width,
-            canvas.height / img.height
-        ) * 1.0; // 100% fill for maximum impact
-
-        const x = (canvas.width / 2) - (img.width / 2) * scale;
-        const y = (canvas.height / 2) - (img.height / 2) * scale;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        renderFrame(frameIndex);
     });
 
     // Handle Resize
